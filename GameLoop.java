@@ -1,6 +1,4 @@
 import javax.swing.Timer;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class GameLoop {
 
@@ -18,14 +16,11 @@ public class GameLoop {
 
     private static final int SPAWN_DELAY = 100;
 
-    private static final int SOFT_DROP_SCORE = 1;
-
-    private static final int HARD_DROP_SCORE = 2;
-
-    private final Board            board;
-    private final ScoreManager     scoreManager;
+    private final Board board;
+    private final ScoreManager scoreManager;
     private final TetrominoFactory factory;
-    private final GameLoopListener listener;  
+    private final GameLoopListener listener;
+
     private Tetromino currentPiece;
     private Tetromino nextPiece;
     private Tetromino heldPiece;      
@@ -37,7 +32,7 @@ public class GameLoop {
 
     private boolean isSoftDropping = false;
     private boolean isLocking      = false; 
-    private int     lockResetCount = 0; 
+    private int lockResetCount = 0; 
 
     private final Timer gravityTimer;  
     private final Timer lockTimer;  
@@ -45,13 +40,13 @@ public class GameLoop {
 
     public GameLoop(Board board, ScoreManager scoreManager,
                     TetrominoFactory factory, GameLoopListener listener) {
-        this.board        = board;
+        this.board = board;
         this.scoreManager = scoreManager;
-        this.factory      = factory;
-        this.listener     = listener;
+        this.factory = factory;
+        this.listener = listener;
 
         this.currentPiece = factory.next();
-        this.nextPiece    = factory.next();
+        this.nextPiece = factory.next();
 
         gravityTimer = new Timer(getFallInterval(), e -> tickGravity());
         gravityTimer.setRepeats(true);
@@ -82,7 +77,6 @@ public class GameLoop {
     public void onKeyPause() {
         if (isGameOver) return;
         isPaused = !isPaused;
-
         if (isPaused) {
             gravityTimer.stop();
             lockTimer.stop();
@@ -97,7 +91,6 @@ public class GameLoop {
         stop();
         board.reset();
         scoreManager.reset();
-
         currentPiece = factory.next();
         nextPiece = factory.next();
         heldPiece = null;
@@ -106,7 +99,6 @@ public class GameLoop {
         lockResetCount = 0;
         isSoftDropping = false;
         isGameOver = false;
-
         start();
     }
 
@@ -115,38 +107,45 @@ public class GameLoop {
 
         boolean fell = tryMoveDown();
 
-        if (!fell && !isLocking) {
-            startLockDelay();
+        if (fell) {
+            if (isSoftDropping) scoreManager.addSoftDrop(1);
+            if (isLocking) cancelLockDelay();
+        } else {
+            if (!isLocking) startLockDelay();
         }
 
         listener.onUpdate();
     }
 
+    private boolean tryMoveDown() {
+        return currentPiece.move(0, 1, board);
+    }
+
     private void startLockDelay() {
         isLocking = true;
+        lockTimer.start();
+    }
+
+    private void cancelLockDelay() {
+        isLocking      = false;
         lockResetCount = 0;
-        lockTimer.restart();
+        lockTimer.stop();
     }
 
     private void resetLockDelay() {
         if (!isLocking) return;
-
-        if (lockResetCount >= MAX_LOCK_RESETS) {
-            executeLock();
-        } else {
-            lockResetCount++;
+        if (lockResetCount >= MAX_LOCK_RESETS) return;
             lockTimer.restart();
+            lockResetCount++;
         }
-    }
 
     private void executeLock() {
         lockTimer.stop();
         isLocking = false;
         lockResetCount = 0;
 
-        if (tryMoveDown()) {
-            return;
-        }
+        if (tryMoveDown()) return;
+        
 
         board.placeTetromino(currentPiece);
         int cleared = board.clearLines();
@@ -168,12 +167,10 @@ public class GameLoop {
 
     private void spawnNext() {
         currentPiece = nextPiece;
-        nextPiece    = factory.next();
+        nextPiece = factory.next();
         isSoftDropping = false;
-
         gravityTimer.setDelay(getFallInterval());
         gravityTimer.start();
-
         listener.onUpdate();
     }
 
@@ -195,9 +192,7 @@ public class GameLoop {
         if (!canAct()) return;
         int rotBefore = currentPiece.getRotation();
         currentPiece.rotateCW(board);
-        if (currentPiece.getRotation() != rotBefore) {
-            resetLockDelay(); 
-        }
+        if (currentPiece.getRotation() != rotBefore) resetLockDelay(); 
         listener.onUpdate();
     }
 
@@ -205,37 +200,37 @@ public class GameLoop {
         if (!canAct()) return;
         int rotBefore = currentPiece.getRotation();
         currentPiece.rotateCCW(board);
-        if (currentPiece.getRotation() != rotBefore) {
-            resetLockDelay();
-        }
+        if (currentPiece.getRotation() != rotBefore) resetLockDelay();
         listener.onUpdate();
     }
 
     public void onKeySoftDrop(boolean pressing) {
         if (!canAct()) return;
         isSoftDropping = pressing;
-        gravityTimer.setDelay(pressing ? SOFT_DROP_INTERVAL : getFallInterval());
 
-        if (pressing) {
+        if (pressing){
+            gravityTimer.setDelay(SOFT_DROP_INTERVAL);
             boolean fell = tryMoveDown();
             if (fell) {
                 scoreManager.addSoftDrop(1);
-                if (isLocking) resetLockDelay();
+                if (isLocking) cancelLockDelay();
             } else if (!isLocking) {
                 startLockDelay();
             }
+        } else {
+            gravityTimer.setDelay(getFallInterval());
+        }
             listener.onUpdate();
         }
-    }
 
     public void onKeyHardDrop() {
         if (!canAct()) return;
 
-        int ghostY   = board.getGhostY(currentPiece);
+        int ghostY = board.getGhostY(currentPiece);
         int currentY = currentPiece.getPosition().y;
         int rowsFell = ghostY - currentY;
 
-        while (currentPiece.move(0, 1, board)) { /* tiếp tục */ }
+        while (tryMoveDown()) { /* tiếp tục */ }
 
         if (rowsFell > 0) scoreManager.addHardDrop(rowsFell);
 
@@ -253,13 +248,14 @@ public class GameLoop {
         lockResetCount = 0;
 
         if (heldPiece == null) {
-            heldPiece    = new Tetromino(currentPiece.getType());
+            heldPiece = new Tetromino(currentPiece.getType());
             currentPiece = nextPiece;
-            nextPiece    = factory.next();
+            nextPiece = factory.next();
         } else {
-            Tetromino temp = new Tetromino(currentPiece.getType());
-            currentPiece   = new Tetromino(heldPiece.getType());
-            heldPiece      = temp;
+            Tetromino swapIn = new Tetromino(heldPiece.getType());
+            Tetromino swapOut = new Tetromino(currentPiece.getType());
+            currentPiece   = swapIn;
+            heldPiece      = swapOut;
         }
 
         listener.onUpdate();
@@ -270,14 +266,15 @@ public class GameLoop {
     }
 
     private int getFallInterval() {
+        if (isSoftDropping) return SOFT_DROP_INTERVAL;
         int idx = Math.min(scoreManager.getLevel() - 1, FALL_INTERVALS.length - 1);
-        return isSoftDropping ? SOFT_DROP_INTERVAL : FALL_INTERVALS[idx];
+        return FALL_INTERVALS[idx];
     }
 
     public Tetromino getCurrentPiece() { return currentPiece; }
-    public Tetromino getNextPiece()    { return nextPiece; }
-    public Tetromino getHeldPiece()    { return heldPiece; }
-    public boolean   isGameOver()      { return isGameOver; }
-    public boolean   isPaused()        { return isPaused; }
-    public boolean   isRunning()       { return isRunning; }
+    public Tetromino getNextPiece() { return nextPiece; }
+    public Tetromino getHeldPiece() { return heldPiece; }
+    public boolean isGameOver() { return isGameOver; }
+    public boolean isPaused() { return isPaused; }
+    public boolean isRunning() { return isRunning; }
 }
