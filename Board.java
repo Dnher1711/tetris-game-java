@@ -1,9 +1,9 @@
 public class Board {
 
-    public static final int WIDTH       = 10;
-    public static final int HEIGHT      = 20;
+    public static final int WIDTH = 10;
+    public static final int HEIGHT = 20;
     public static final int HIDDEN_ROWS = 2;
-    public static final int TOTAL_ROWS  = HEIGHT + HIDDEN_ROWS;
+    public static final int TOTAL_ROWS = HEIGHT + HIDDEN_ROWS;
 
     private Cell[][] grid;
 
@@ -22,12 +22,9 @@ public class Board {
                 int boardCol = p.x + c; 
                 int boardRow = p.y + r; 
 
-                if (boardCol < 0 || boardCol >= WIDTH)   return false;
-
-                if (boardRow >= TOTAL_ROWS)               return false;
-
-                if (boardRow < 0)                         continue;
-
+                if (boardCol < 0 || boardCol >= WIDTH) return false;
+                if (boardRow >= TOTAL_ROWS) return false;
+                if (boardRow < 0) continue;
                 if (grid[boardRow][boardCol].isOccupied()) return false;
             }
         }
@@ -54,8 +51,14 @@ public class Board {
                 r++;
             }
         }
-
         return cleared;
+    }
+
+    public static int calcScore(int linesCleared, int level) {
+        final int[] BASE_SCORES = {0, 100, 300, 500, 800};
+
+        if (linesCleared < 0 || linesCleared > 4) return 0;
+        return BASE_SCORES[linesCleared] * (level + 1);
     }
 
     private boolean isRowFull(int r) {
@@ -74,6 +77,14 @@ public class Board {
         for (int c = 0; c < WIDTH; c++) {
             grid[0][c] = new Cell();
         }
+    }
+
+    public int[] getClearedRowIndices() {
+        java.util.List<Integer> indices = new java.util.ArrayList<>();
+        for (int r = HIDDEN_ROWS ; r < TOTAL_ROWS; r++) {
+            if (isRowFull(r)) indices.add(r);
+        }
+        return indices.stream().mapToInt(Integer::intValue).toArray();
     }
 
     public int getGhostY(Tetromino t) {
