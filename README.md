@@ -1,7 +1,6 @@
-﻿# Introduction
-
-## Project Name
-**THE TETRIS GAME**
+# Project Name
+## 🎮THE TETRIS GAME 
+<img width="899" height="749" alt="image" src="https://github.com/user-attachments/assets/76d336be-ec8a-4d3d-8c9d-7f917f7c3d58" />
 
 ## Developed By
 Group H Members
@@ -10,7 +9,7 @@ Group H Members
 - B
 - Đỗ Trần Bảo Như
 
-## Description
+## 📝 Description
 
 This is a Tetris game project developed by a group of K25 students from International University - Vietnam National University Ho Chi Minh City.
 
@@ -20,7 +19,7 @@ The game includes core Tetris mechanics such as Tetromino rotation, line clearin
 
 The objective of this project is to help students become familiar with Object-Oriented Programming (OOP) and basic GitHub usage through learning how to develop a Tetris game project.
 
-# Features
+# ✨ Features
 
 - Tetromino movement
 - Tetromino rotation
@@ -33,16 +32,43 @@ The objective of this project is to help students become familiar with Object-Or
 - Random Tetromino generation
 - Super Rotation System (SRS)
 
-# Gameplay
+# 📂 Project Structure
 
-## Basic Rules
-Players control falling Tetromino pieces and arrange them to form complete horizontal lines on the playfield. 
-When a horizontal line is completely filled, the line will be cleared and the player will receive points. 
-As the game progresses, the falling speed of Tetromino pieces gradually increases, making the gameplay more challenging.
+| File | Description |
+| :--- | :--- |
+| `Board.java` | Manages the $10 \times 20$ grid, collision detection, and line clearing. |
+| `GameLogic.java` | Core game rules: scoring, level progression, and gravity. |
+| `GameLoop.java` | Handles timing, input events, and the $500ms$ lock delay. |
+| `Tetromino.java` | Defines shapes, colors, and rotation logic (SRS). |
+| `GameOverGUI.java` | Main entry point with advanced Swing graphics and effects. |
+| `Cell.java` | Represents individual grid units and their states. |
 
-## Scoring System
-Players can earn points by clearing lines, performing T-Spins, creating combos, and achieving Back-to-Back (B2B) line clears. 
-Additional points are also awarded when using soft drop and hard drop mechanics.
+# 🛠 Tech Stack 
+- Language: Java
+- GUI Framework: Java Swing and AWT (Graphics2D)
+- Architecture: Object-Oriented Programming (OOP)
 
-## Game Over Condition
-The game ends when Tetromino pieces stack up to the top of the playfield and new pieces can no longer spawn properly.
+# 💻 Development tools
+- IDE: IntelliJ IDEA and VS
+- Manage code: GitHub
+
+# ⚙️ How to run
+- Download JDK enviroment : Recommended Java 8+
+- IDE : Recommended VS and IntelliJ IDE
+  ## Extension
+- Open project in your IDE
+- Run TetrisGame file to start the game
+
+# ⌨️ Game Controls
+
+| Action | Key | Description |
+| :--- | :---: | :--- |
+| **Move Left** | `←` or  | Move piece to the left |
+| **Move Right** | `→` or | Move piece to the right |
+| **Rotate** | `Z` or `↑`  | Rotate Tetromino |
+| **Soft Drop** | `↓`  | Drop piece faster |
+| **Hard Drop** | `Space` | Drop piece instantly |
+| **Pause/Resume** | `P` | Pause or resume the game |
+| **Restart** | `R` | Restart the game |
+
+
