@@ -5,8 +5,8 @@
 ## Developed By
 Group H Members
 
-- A
-- B
+- Vũ Đoàn Phương Vy
+- Nguyễn Thị Linh
 - Đỗ Trần Bảo Như
 
 ## 📝 Description
