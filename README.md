@@ -63,8 +63,8 @@ The objective of this project is to help students become familiar with Object-Or
 
 | Action | Key | Description |
 | :--- | :---: | :--- |
-| **Move Left** | `←` or  | Move piece to the left |
-| **Move Right** | `→` or | Move piece to the right |
+| **Move Left** | `←`   | Move piece to the left |
+| **Move Right** | `→`  | Move piece to the right |
 | **Rotate** | `Z` or `↑`  | Rotate Tetromino |
 | **Soft Drop** | `↓`  | Drop piece faster |
 | **Hard Drop** | `Space` | Drop piece instantly |
