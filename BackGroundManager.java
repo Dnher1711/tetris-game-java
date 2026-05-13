@@ -14,3 +14,19 @@ public class BackgroundManager {
         currentColor = levelColors[0];
         targetColor = levelColors[0];
     }
+    public void update(int level) {
+        int colorIndex = Math.min(level - 1, levelColors.length - 1);
+        targetColor = levelColors[colorIndex];
+
+        // Hiệu ứng chuyển màu mượt (Interpolation)
+        int r = interpolate(currentColor.getRed(), targetColor.getRed());
+        int g = interpolate(currentColor.getGreen(), targetColor.getGreen());
+        int b = interpolate(currentColor.getBlue(), targetColor.getBlue());
+        currentColor = new Color(r, g, b);
+    }
+
+    private int interpolate(int current, int target) {
+        if (current < target) return Math.min(current + 1, target);
+        if (current > target) return Math.max(current - 1, target);
+        return target;
+    }
