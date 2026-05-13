@@ -1,24 +1,20 @@
-import javax.sound.sampled.*;
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-public class SoundManager {
-    private Clip moveClip, musicClip, rotateClip, breakClip, landClip;
+import java.awt.*;
+import java.util.Random;
 
-    public SoundManager() {
-        musicClip = loadClip("/music.wav");
-        breakClip = loadClip ("/break (1).wav");
-    }
-    private Clip loadClip(String fileName) {
-        try {
-            InputStream is = SoundManager.class.getResourceAsStream(fileName);
-            if (is == null) return null;
-            InputStream bufferedIn = new BufferedInputStream(is);
-            AudioInputStream audioIn = AudioSystem.getAudioInputStream(bufferedIn);
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioIn);
-            return clip;
-        } catch (Exception e) {
-            System.err.println("Không tìm thấy: " + fileName);
-            return null;
-        }
+public class StarParticle {
+    public double x, y;
+    public double velX, velY;
+    public int size;
+    public Color color;
+    public int life = 40; // Thời gian tồn tại (opacity giảm dần)
+    private static final Random rand = new Random();
+
+    public StarParticle(int startX, int startY, Color color) {
+        this.x = startX;
+        this.y = startY;
+        this.color = color;
+        this.size = rand.nextInt(10) + 11;
+        // Tạo tốc độ bay ngẫu nhiên
+        this.velX = (rand.nextDouble() - 0.5) * 15;
+        this.velY = -(rand.nextDouble()  * 15 +10);
     }
