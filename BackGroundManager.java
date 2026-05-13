@@ -1,5 +1,5 @@
 import java.awt.*;
-public class BackgroundManager {
+public class BackGroundManager {
     private Color currentColor;
     private Color targetColor;
     private final Color[] levelColors = {
@@ -10,7 +10,7 @@ public class BackgroundManager {
             new Color(40, 20, 40),   // Level 5: Tím tối
             new Color(20, 40, 40)    // Level 6+
     };
-    public BackgroundManager() {
+    public BackGroundManager() {
         currentColor = levelColors[0];
         targetColor = levelColors[0];
     }
