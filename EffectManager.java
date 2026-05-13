@@ -26,3 +26,18 @@ public class EffectManager {
             particles.add(new StarParticle(startX, startY, pColor));
         }
     }
+    public void update() {
+        Iterator<StarParticle> it = particles.iterator();
+        while (it.hasNext()) {
+            StarParticle p = it.next();
+            p.update();
+            if (p.life <= 0) it.remove();
+        }
+    }
+
+    public void draw(Graphics2D g2d) {
+        for (StarParticle p : particles) {
+            p.draw(g2d);
+        }
+    }
+}
