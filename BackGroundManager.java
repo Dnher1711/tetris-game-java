@@ -30,3 +30,9 @@ public class BackgroundManager {
         if (current > target) return Math.max(current - 1, target);
         return target;
     }
+    public void draw(Graphics2D g2d, int width, int height) {
+        GradientPaint gp = new GradientPaint(0, 0, currentColor, 0, height, Color.BLACK);
+        g2d.setPaint(gp);
+        g2d.fillRect(0, 0, width, height);
+    }
+}
